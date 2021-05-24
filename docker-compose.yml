@@ -14,12 +14,13 @@ services:
       - mongo
       - redis
     environment:
-      MONGO_URL: mongodb://mongo:27017/crypto-tickers-api
+      MONGO_URL: mongodb://mongo:27017/stock-api
       REDIS_URL: redis
       REDIS_PORT: 6379
-      APP_NAME: crypto-ticker-api
+      APP_NAME: stock-api
       API_KEY: dummy
       NODE_ENV: development
+      FINNHUB_TOKEN:
 
   configs-worker:
     build: 
@@ -32,9 +33,10 @@ services:
     links:
       - mongo
     environment:
-      MONGO_URL: mongodb://mongo:27017/crypto-tickers-api
-      APP_NAME: crypto-ticker-api
+      MONGO_URL: mongodb://mongo:27017/stock-api
+      APP_NAME: stock-api
       NODE_ENV: development
+      FINNHUB_TOKEN:
 
   mongo:
     image: mongo

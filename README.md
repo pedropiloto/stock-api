@@ -1,4 +1,4 @@
-# Crypto Ticker API
+# Stock API
 
  
 

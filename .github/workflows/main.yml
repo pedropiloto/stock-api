@@ -37,7 +37,7 @@ jobs:
         with:
           file: Dockerfile-web
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/crypto-ticker-api:${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/stock-api:${{ github.sha }}
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
@@ -47,7 +47,7 @@ jobs:
         with:
           image: caprover/cli-caprover:v2.1.1
           run: |
-            caprover deploy --caproverUrl ${{ secrets.CAPROVER_URL }} --caproverPassword "${{ secrets.CAPROVER_PASSWORD }}" --caproverApp crypto-ticker-api --imageName ${{ secrets.DOCKERHUB_USERNAME }}/crypto-ticker-api:${{ github.sha }}
+            caprover deploy --caproverUrl ${{ secrets.CAPROVER_URL }} --caproverPassword "${{ secrets.CAPROVER_PASSWORD }}" --caproverApp stock-api --imageName ${{ secrets.DOCKERHUB_USERNAME }}/stock-api:${{ github.sha }}
   deploy-configs-worker:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -71,7 +71,7 @@ jobs:
         with:
           file: Dockerfile-configs-worker
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/crypto-ticker-configs-worker:${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/stock-api-configs-worker:${{ github.sha }}
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
@@ -81,7 +81,7 @@ jobs:
         with:
           image: caprover/cli-caprover:v2.1.1
           run: |
-            caprover deploy --caproverUrl ${{ secrets.CAPROVER_URL }} --caproverPassword "${{ secrets.CAPROVER_PASSWORD }}" --caproverApp crypto-ticker-configs-worker --imageName ${{ secrets.DOCKERHUB_USERNAME }}/crypto-ticker-configs-worker:${{ github.sha }}
+            caprover deploy --caproverUrl ${{ secrets.CAPROVER_URL }} --caproverPassword "${{ secrets.CAPROVER_PASSWORD }}" --caproverApp stock-api-configs-worker --imageName ${{ secrets.DOCKERHUB_USERNAME }}/stock-api-configs-worker:${{ github.sha }}
 
   
 

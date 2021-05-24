@@ -1,7 +1,7 @@
 require('newrelic');
 const express = require("express");
 const logger = require("morgan");
-const tickerController = require("./controllers/tickerController");
+const stockController = require("./controllers/stockController");
 const authMiddleware = require("./auth-middleware")
 const app = express();
 const mongoose = require("./config/database"); //database configuration
@@ -41,10 +41,8 @@ app.use(logger("dev"));
 
 // private route
 
-app.get("/ticker", authMiddleware, tickerController.get);
-app.get("/ticker/config", authMiddleware, tickerController.getTickers);
-app.get("/coin/:name", authMiddleware, tickerController.getCoin);
-app.get("/currencies", authMiddleware, tickerController.getCurrencies);
+app.get("/stock/quote", authMiddleware, stockController.get);
+app.get("/stock", authMiddleware, stockController.getStock);
 
 const port = process.env.PORT || 3000;
 

@@ -1,8 +1,7 @@
 require('newrelic');
 const getMetricEmitter = require('@newrelic/native-metrics')
-const { getSupportedCurrencies, getCoinsMarket } = require("./gateways/coingecko-gateway");
-const Coin = require("./models/coin");
-const Currency = require("./models/currency");
+const FinnhubGateway = require("./gateways/finnhub-gateway");
+const Stock = require("./models/stock");
 const SUPPORTED_CURRENCIES = require("./supported-currencies");
 const mongoose = require("./config/database"); //database configuration
 const Bugsnag = require('@bugsnag/js');
@@ -38,70 +37,55 @@ const start = async () => {
     let coins = []
 
     log({
-      message: `start fetching coins from api`, type: BUSINESS_LOG_TYPE, transactional: false
-    });
-    for (let i = 0; i < 30; i++) {
-      let coins_response = await getCoinsMarket(i + 1)
-      coins = coins.concat(coins_response.data)
-    }
-    log({
-      message: `coins fetched from api: ${coins.length}`, type: BUSINESS_LOG_TYPE, transactional: false
+      message: `start fetching stocks from api`, type: BUSINESS_LOG_TYPE, transactional: false
     });
 
-    let supported_vs_currencies = await getSupportedCurrencies()
 
-    let filtered_supported_currencies = SUPPORTED_CURRENCIES.filter(
-      sc => supported_vs_currencies.data.find(svc => svc === sc)).map(x => x.toUpperCase())
+    let stocks_response = (await FinnhubGateway.getStocks())
+    let stocks=stocks_response.data.map((x)=>{return{symbol: x.symbol, currency: x.currency}})
 
-    let tickers = coins.filter(x => !x.id.includes(":")).filter(x => !x.id.includes(";")).map(
-      x => {
-        return {
-          base_id: x.id,
-          base: x.symbol.toUpperCase(),
-        }
-      }
-    )
+    console.log(stocks)
 
     let upsertOptions = { upsert: true, new: true, setDefaultsOnInsert: true }
 
     //insert coins
-    let insertCoinsPromises = []
-    tickers.forEach(element => {
-      let query = { base_id: element.base_id }
-      let update = { base_id: element.base_id, base: element.base, active: true }
-      insertCoinsPromises.push(Coin.findOneAndUpdate(query, update,
+    let insertStocksPromises = []
+    stocks.forEach(element => {
+      let query = { symbol: element.symbol }
+      let update = { symbol: element.symbol, currency: element.currency, active: true }
+      insertStocksPromises.push(Stock.findOneAndUpdate(query, update,
         upsertOptions).catch((error) => {
           log({
-            message: `ERROR inserting coin: ${error.stack}, coin: ${element.id}`, type: BUSINESS_LOG_TYPE, transactional: false
+            message: `ERROR inserting stock: ${error.stack}, stock: ${element.symbol}`, type: BUSINESS_LOG_TYPE, transactional: false
           });
           Bugsnag.notify(error);
         }))
     });
 
-    await Promise.all(insertCoinsPromises)
+    await Promise.all(insertStocksPromises)
 
     //update coins
-    let updateCoinsPromises = []
-    let coinsData
+    let updateStocksPromises = []
+    let stocksData
 
     try {
-      coinsData = await Coin.find({})
+      stocksData = await Stock.find({})
     } catch (error) {
       log({
-        message: `ERROR fetching coins from db: ${error.stack}`, type: BUSINESS_LOG_TYPE, transactional: false
+        message: `ERROR fetching stocks from db: ${error.stack}`, type: BUSINESS_LOG_TYPE, transactional: false
       });
       Bugsnag.notify(error);
     }
 
-    if (coinsData) {
-      let coinsToDesactivate = coinsData.filter(cd => cd.added_manually !== true).filter(x => !tickers.find(y => y.base_id === x.base_id))
-      coinsToDesactivate.forEach(element => {
-        let query = { base_id: element.base_id }
+    if (stocksData) {
+      let stocksToDesactivate = stocksData.filter(sd => sd.added_manually !== true).filter(x => !stocks.find(y => y.symbol === x.symbol))
+      stocksToDesactivate.forEach(element => {
+        let query = { symbol: element.symbol }
         let update = { active: false }
-        updateCoinsPromises.push(Coin.findOneAndUpdate(query, update,
+        updateStocksPromises.push(Stock.findOneAndUpdate(query, update,
           {}).catch((error) => {
             log({
-              message: `ERROR updating removed coin: ${error.stack}, coin: ${element}`, type: BUSINESS_LOG_TYPE, transactional: false
+              message: `ERROR updating removed stock: ${error.stack}, stock: ${element}`, type: BUSINESS_LOG_TYPE, transactional: false
             });
             Bugsnag.notify(error);
           })
@@ -109,69 +93,11 @@ const start = async () => {
       })
 
       log({
-        message: `sstart updating coins`, type: BUSINESS_LOG_TYPE, transactional: false
+        message: `start updating stocks`, type: BUSINESS_LOG_TYPE, transactional: false
       });
-      await Promise.all(updateCoinsPromises)
+      await Promise.all(updateStocksPromises)
       log({
-        message: `finish updating coins`, type: BUSINESS_LOG_TYPE, transactional: false
-      });
-    }
-
-    //insert currencies
-    let insertCurrenciesPromises = []
-    filtered_supported_currencies.forEach(element => {
-      let query = { name: element }
-      let update = { name: element, active: true }
-      insertCurrenciesPromises.push(Currency.findOneAndUpdate(query, update,
-        upsertOptions).catch((error) => {
-          log({
-            message: `ERROR iinserting currency: ${error.stack}, currency: ${element}`, type: BUSINESS_LOG_TYPE, transactional: false
-          });
-          Bugsnag.notify(error);
-        })
-      )
-    });
-
-    log({
-      message: `start inserting currencies`, type: BUSINESS_LOG_TYPE, transactional: false
-    });
-    await Promise.all(insertCurrenciesPromises)
-    log({
-      message: `finish inserting currencies`, type: BUSINESS_LOG_TYPE, transactional: false
-    });
-
-    //update currencies
-    let updateCurrenciesPromises = []
-    let currenciesData
-    try {
-      currenciesData = await Currency.find({})
-    } catch (error) {
-      log({
-        message: `ERROR fetching currencies: ${error.stack}`, type: BUSINESS_LOG_TYPE, transactional: false
-      });
-      Bugsnag.notify(error);
-    }
-
-    if (currenciesData) {
-      let currenciesToDesactivate = currenciesData.filter(x => !filtered_supported_currencies.find(y => y === x.name))
-      currenciesToDesactivate.forEach(element => {
-        let query = { name: element.name }
-        let update = { active: false }
-        updateCurrenciesPromises.push(Currency.findOneAndUpdate(query, update,
-          {}).catch((error) => {
-            log({
-              message: `ERROR updating removed currency: ${error.stack}, currency: ${element}`, type: BUSINESS_LOG_TYPE, transactional: false
-            });
-            Bugsnag.notify(error);
-          }))
-      })
-
-      log({
-        message: `start updating currencies`, type: BUSINESS_LOG_TYPE, transactional: false
-      });
-      await Promise.all(updateCurrenciesPromises)
-      log({
-        message: `finish updating currencies`, type: BUSINESS_LOG_TYPE, transactional: false
+        message: `finish updating stocks`, type: BUSINESS_LOG_TYPE, transactional: false
       });
     }
   } catch (error) {

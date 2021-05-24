@@ -3,15 +3,15 @@ const mongoose = require("mongoose");
 //Define a schema
 const Schema = mongoose.Schema;
 
-const CoinSchema = new Schema({
-  base: {
+const StockSchema = new Schema({
+  symbol: {
     type: String,
     trim: true,
     required: true,
-  },
-  base_id: {
-    type: String,
     index: true,
+  },
+  currency: {
+    type: String,
     trim: true,
     required: true
   },
@@ -31,4 +31,4 @@ const CoinSchema = new Schema({
 },
 {timestamps:true});
 
-module.exports = mongoose.model("Coin", CoinSchema);
+module.exports = mongoose.model("Stock", StockSchema);
