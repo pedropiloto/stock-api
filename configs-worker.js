@@ -34,8 +34,6 @@ const start = async () => {
       }
     );
 
-    let coins = []
-
     log({
       message: `start fetching stocks from api`, type: BUSINESS_LOG_TYPE, transactional: false
     });
@@ -43,8 +41,6 @@ const start = async () => {
 
     let stocks_response = (await FinnhubGateway.getStocks())
     let stocks=stocks_response.data.map((x)=>{return{symbol: x.symbol, currency: x.currency}})
-
-    console.log(stocks)
 
     let upsertOptions = { upsert: true, new: true, setDefaultsOnInsert: true }
 
