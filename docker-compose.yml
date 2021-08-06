@@ -21,6 +21,7 @@ services:
       API_KEY: dummy
       NODE_ENV: development
       FINNHUB_TOKEN:
+      FINANCIAL_MODELING_PREP_TOKEN:
 
   configs-worker:
     build: 

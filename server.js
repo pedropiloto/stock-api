@@ -43,6 +43,7 @@ app.use(logger("dev"));
 
 app.get("/stock/quote", authMiddleware, stockController.get);
 app.get("/stock", authMiddleware, stockController.getStock);
+app.get("/index/sp500", authMiddleware, stockController.getSP500);
 
 const port = process.env.PORT || 3000;
 
