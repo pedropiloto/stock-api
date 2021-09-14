@@ -46,7 +46,7 @@ const get = async (req, res, next) => {
 
   if (stock_symbol === 'SP500') {
     try {
-      res.send(getSP500())
+      res.send(getSP500(device_mac_address))
       return
     } catch (error) {
       log({
@@ -105,15 +105,16 @@ const get = async (req, res, next) => {
   }
 }
 
-const getSP500 = async (req, res, next) => {
+const getSP500 = async (device_mac_address) => {
 
   let provider_result = await getSP500Quote()
   let current_quote = provider_result.data[0].price
   let previous_close_quote = provider_result.data[0].previousClose
   let difference = Math.round(relDiff(current_quote, previous_close_quote) * 100) / 100
+  let stock_symbol = "SP500"
 
   let result = `${current_quote};${difference}`
-  redisClient.set('SP500', result).catch((error) => {
+  redisClient.set(stock_symbol, result).catch((error) => {
     log({
       message: `ERROR saving cache: ${error.stack}, stock: ${stock_symbol}, device_mac_address:${device_mac_address}`, type: BUSINESS_LOG_TYPE, transactional: false, stock_symbol, device_mac_address, severity: ERROR_SEVERITY
     });
