@@ -3,7 +3,8 @@ const newrelic = require('newrelic');
 require("dotenv").config();
 const Stock = require("../models/stock");
 const { getQuote } = require("../gateways/finnhub-gateway");
-const { getSP500Quote } = require("../gateways/financialmodelingprep-gateway");
+const { getIndexQuote } = require("../gateways/financialmodelingprep-gateway");
+const supportedIndexes = require("../supported-indexes");
 /* Values are hard-coded for this example, it's usually best to bring these in via file or environment variable for production */
 redisClient = require("../gateways/redis-gateway")
 const { log } = require('../utils/logger');
@@ -11,6 +12,7 @@ const Bugsnag = require('@bugsnag/js');
 const {
   OPERATIONAL_LOG_TYPE, ERROR_SEVERITY, BUSINESS_LOG_TYPE
 } = require('../utils/constants');
+const { connections } = require('mongoose');
 
 const get = async (req, res, next) => {
   let device_mac_address = req.headers['device-mac-address']
@@ -44,9 +46,10 @@ const get = async (req, res, next) => {
 
   newrelic.addCustomAttribute('cached', false)
 
-  if (stock_symbol === 'SP500') {
+  if (Object.keys(supportedIndexes).includes(stock_symbol)) {
     try {
-      res.send(getSP500(device_mac_address))
+      result = await getIndex(stock_symbol, device_mac_address)
+      res.send(result)
       return
     } catch (error) {
       log({
@@ -105,14 +108,14 @@ const get = async (req, res, next) => {
   }
 }
 
-const getSP500 = async (device_mac_address) => {
+const getIndex = async (index, device_mac_address) => {
 
-  let provider_result = await getSP500Quote()
+  let stock_symbol = supportedIndexes[index]
+  let provider_result = await getIndexQuote(stock_symbol)
   let current_quote = provider_result.data[0].price
   let previous_close_quote = provider_result.data[0].previousClose
   let difference = Math.round(relDiff(current_quote, previous_close_quote) * 100) / 100
-  let stock_symbol = "SP500"
-
+  
   let result = `${current_quote};${difference}`
   redisClient.set(stock_symbol, result).catch((error) => {
     log({
@@ -135,7 +138,6 @@ const getSP500 = async (device_mac_address) => {
 const getStock = async (req, res, next) => {
   try {
     let stock_requested = req.query.name && req.query.name.toUpperCase()
-    console.log("p", stock_requested)
     newrelic.addCustomAttribute('device_mac_address', req.headers['device-mac-address'])
     newrelic.addCustomAttribute('device_model', req.headers['device-model'] || "MULTI_STOCK")
     newrelic.addCustomAttribute('device_version', req.headers['device-version'] || "1.0.0")
@@ -163,4 +165,4 @@ function relDiff(a, b) {
   return 100 * (a - b) / ((a + b) / 2);
 }
 
-module.exports = { get, getStock, getSP500 };
+module.exports = { get, getStock };

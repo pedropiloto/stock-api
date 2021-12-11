@@ -10,14 +10,14 @@ const limiter = new Bottleneck({
   minTime: 5000, // pick a value that makes sense for your use case
 });
 
-const getSP500Quote = async (symbol) => {
+const getIndexQuote = async (symbol) => {
 
   return limiter.wrap(() => axios({
     method: 'get',
-    url: `https://financialmodelingprep.com/api/v3/quote/%5EGSPC?apikey=${financialmodelingprepToken}`
+    url: `https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=${financialmodelingprepToken}`
   }))();
 };
 
 module.exports = {
-  getSP500Quote
+  getIndexQuote
 };
