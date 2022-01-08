@@ -12,7 +12,7 @@ const {
 } = require('./utils/constants');
 const Bugsnag = require('@bugsnag/js');
 var BugsnagPluginExpress = require('@bugsnag/plugin-express')
-
+const cors = require('cors');
 
 mongoose.connection.on(
   "error",
@@ -37,12 +37,20 @@ if (process.env.NODE_ENV === 'production' && process.env.BUSGNAG_API_KEY) {
   app.use(bugsnagMiddleware.errorHandler)
 }
 
+app.use(cors({
+  origin: '*'
+}));
+
 app.use(logger("dev"));
 
 // private route
 
 app.get("/stock/quote", authMiddleware, stockController.get);
 app.get("/stock", authMiddleware, stockController.getStock);
+
+app.post('/stuff', function (req, res) {
+  res.json({ 'success': true })
+})
 
 const port = process.env.PORT || 3000;
 

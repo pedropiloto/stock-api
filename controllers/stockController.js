@@ -115,7 +115,7 @@ const getIndex = async (index, device_mac_address) => {
   let current_quote = provider_result.data[0].price
   let previous_close_quote = provider_result.data[0].previousClose
   let difference = Math.round(relDiff(current_quote, previous_close_quote) * 100) / 100
-  
+
   let result = `${current_quote};${difference}`
   redisClient.set(stock_symbol, result).catch((error) => {
     log({
