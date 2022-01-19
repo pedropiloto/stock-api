@@ -48,6 +48,7 @@ const get = async (req, res, next) => {
 
   if (Object.keys(supportedIndexes).includes(stock_symbol)) {
     try {
+      newrelic.addCustomAttribute('isIndex', true)
       result = await getIndex(stock_symbol, device_mac_address)
       res.send(result)
       return
@@ -117,7 +118,7 @@ const getIndex = async (index, device_mac_address) => {
   let difference = Math.round(relDiff(current_quote, previous_close_quote) * 100) / 100
 
   let result = `${current_quote};${difference}`
-  redisClient.set(stock_symbol, result).catch((error) => {
+  redisClient.set(index, result).catch((error) => {
     log({
       message: `ERROR saving cache: ${error.stack}, stock: ${stock_symbol}, device_mac_address:${device_mac_address}`, type: BUSINESS_LOG_TYPE, transactional: false, stock_symbol, device_mac_address, severity: ERROR_SEVERITY
     });
@@ -125,9 +126,9 @@ const getIndex = async (index, device_mac_address) => {
   })
   let expireTTL = process.env.REDIS_INDEX_TICKER_MARKET_TTL || 3600
   log({
-    message: `Setting Ticker ${stock_symbol}, device_mac_address: ${device_mac_address} to expire in ${expireTTL}`, type: BUSINESS_LOG_TYPE, transactional: false, stock_symbol, device_mac_address
+    message: `Setting Ticker ${index} - ${stock_symbol}, device_mac_address: ${device_mac_address} to expire in ${expireTTL}`, type: BUSINESS_LOG_TYPE, transactional: false, stock_symbol, device_mac_address
   });
-  redisClient.expire(stock_symbol, expireTTL)
+  redisClient.expire(index, expireTTL)
   log({
     message: `sent result: ${result} from api`, type: BUSINESS_LOG_TYPE, transactional: false, stock_symbol, device_mac_address
   });

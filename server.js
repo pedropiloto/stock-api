@@ -48,13 +48,6 @@ app.use(logger("dev"));
 app.get("/stock/quote", authMiddleware, stockController.get);
 app.get("/stock", authMiddleware, stockController.getStock);
 
-app.post('/stuff', function (req, res) {
-  res.json({
-    "hash": "xxxxxx",
-    "signature": "xxxxx"
-   })
-})
-
 const port = process.env.PORT || 3000;
 
 app.listen(port, function () {
