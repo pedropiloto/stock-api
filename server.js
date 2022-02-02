@@ -2,6 +2,7 @@ require('newrelic');
 const express = require("express");
 const logger = require("morgan");
 const stockController = require("./controllers/stockController");
+const apeController = require("./controllers/apeController");
 const authMiddleware = require("./auth-middleware")
 const app = express();
 const mongoose = require("./config/database"); //database configuration
@@ -43,10 +44,16 @@ app.use(cors({
 
 app.use(logger("dev"));
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // private route
 
 app.get("/stock/quote", authMiddleware, stockController.get);
 app.get("/stock", authMiddleware, stockController.getStock);
+
+app.get("/ape", authMiddleware, apeController.get);
+app.post("/ape", authMiddleware, apeController.create);
 
 const port = process.env.PORT || 3000;
 
