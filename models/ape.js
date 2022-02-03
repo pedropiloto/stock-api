@@ -9,6 +9,12 @@ const ApeSchema = new Schema({
     trim: true,
     required: true,
     index: true,
+  },
+  discord_id: {
+    type: String,
+    trim: true,
+    required: true,
+    index: true,
   }
 
 },

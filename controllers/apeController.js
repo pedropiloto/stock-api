@@ -7,9 +7,9 @@ const { connections } = require('mongoose');
 const get = async (req, res, next) => {
 
   apes = await Ape.find({})
-  
+
   let str = ""
-  
+
   for (const element of apes) {
     str = str + element.ip_address + "\n"
   }
@@ -22,19 +22,20 @@ const get = async (req, res, next) => {
 
 const create = async (req, res, next) => {
 
+  const discord_id = req.body.discord_id
   const ip_address = req.body.ip_address
 
   if (!isValidIP(ip_address)) {
-    return res.send(400, 
+    return res.send(400,
       {
         status: "error",
         message: 'Invalid IP Address'
-        }
-      );
+      }
+    );
   }
 
-  const filter = { ip_address: req.body.ip_address };
-  const update = { ip_address: req.body.ip_address };
+  const filter = { discord_id };
+  const update = { discord_id, ip_address };
 
   Ape.findOneAndUpdate(filter, update, {
     upsert: true, new: true
