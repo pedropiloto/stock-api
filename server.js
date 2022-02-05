@@ -4,6 +4,7 @@ const logger = require("morgan");
 const stockController = require("./controllers/stockController");
 const apeController = require("./controllers/apeController");
 const authMiddleware = require("./auth-middleware")
+const noAuthMiddleware = require("./no-auth-middleware")
 const app = express();
 const mongoose = require("./config/database"); //database configuration
 const getMetricEmitter = require('@newrelic/native-metrics')
@@ -54,6 +55,8 @@ app.get("/stock", authMiddleware, stockController.getStock);
 
 app.get("/ape", authMiddleware, apeController.get);
 app.post("/ape", authMiddleware, apeController.create);
+
+app.post("/cenas", noAuthMiddleware, apeController.cenas);
 
 const port = process.env.PORT || 3000;
 
