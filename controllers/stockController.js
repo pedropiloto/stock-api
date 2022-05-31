@@ -114,7 +114,10 @@ const getIndex = async (index) => {
   const stock_symbol = supportedIndexes[index]
   const provider_result = await investingGateway.getIndexQuote(stock_symbol)
 
-  const result = `${provider_result['quote']};${provider_result['change']}`
+  const quote = Number(provider_result['quote'].replace(",",""))
+  const change = Number(provider_result['change'])
+
+  const result = `${quote};${change}`
   redisClient.set(index, result).catch((error) => {
     Bugsnag.notify(error);
   })

@@ -1022,9 +1022,10 @@ inherits@2.0.3, inherits@~2.0.1:
   resolved "https://registry.npmjs.org/inherits/-/inherits-2.0.3.tgz"
   integrity sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=
 
-"investing.com-scraper@https://github.com/pedropiloto/investing.com-scrapper.git":
-  version "6.2.0"
-  resolved "https://github.com/pedropiloto/investing.com-scrapper.git#49a8a92d887dcaf0ce7804463226e0773b14732e"
+investing.com-scraper@^1.0.1:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/investing.com-scraper/-/investing.com-scraper-1.0.0.tgz#2371edc5332e60a03115b2dd78cd6fa32abd3de8"
+  integrity sha512-kt5GaXmCWxvHZQ9/kpg310Jelfr3GVOgGCCy9TOCf9rIZ7ngpnRYdmRqpZIsQdzxk7t1Vqlr1t7IAqn2Kuqzkw==
   dependencies:
     axios "^0.21.1"
     puppeteer "^13.5.1"
