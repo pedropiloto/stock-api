@@ -1,5 +1,5 @@
 module.exports = {
-  'SP500': '%5EGSPC',
-  'DOWJONES': '%5EDJI',
-  'NASDAQ': '%5ENDX'
+  'SP500': 'us-spx-500',
+  'DOWJONES': 'us-30',
+  'NASDAQ': 'nq-100'
 }

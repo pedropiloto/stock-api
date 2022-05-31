@@ -3,7 +3,7 @@ const newrelic = require('newrelic');
 require("dotenv").config();
 const Stock = require("../models/stock");
 const { getQuote } = require("../gateways/finnhub-gateway");
-const { getIndexQuote } = require("../gateways/financialmodelingprep-gateway");
+const investingGateway = require("../gateways/investing");
 const supportedIndexes = require("../supported-indexes");
 /* Values are hard-coded for this example, it's usually best to bring these in via file or environment variable for production */
 redisClient = require("../gateways/redis-gateway")
@@ -109,32 +109,31 @@ const get = async (req, res, next) => {
   }
 }
 
-const getIndex = async (index, device_mac_address) => {
+const getIndex = async (index) => {
 
-  let stock_symbol = supportedIndexes[index]
-  let provider_result = await getIndexQuote(stock_symbol)
-  let current_quote = provider_result.data[0].price
-  let previous_close_quote = provider_result.data[0].previousClose
-  let difference = Math.round(relDiff(current_quote, previous_close_quote) * 100) / 100
+  const stock_symbol = supportedIndexes[index]
+  const provider_result = await investingGateway.getIndexQuote(stock_symbol)
 
-  let result = `${current_quote};${difference}`
+  const result = `${provider_result['quote']};${provider_result['change']}`
   redisClient.set(index, result).catch((error) => {
-    log({
-      message: `ERROR saving cache: ${error.stack}, stock: ${stock_symbol}, device_mac_address:${device_mac_address}`, type: BUSINESS_LOG_TYPE, transactional: false, stock_symbol, device_mac_address, severity: ERROR_SEVERITY
-    });
     Bugsnag.notify(error);
   })
   let expireTTL = process.env.REDIS_INDEX_TICKER_MARKET_TTL || 3600
-  log({
-    message: `Setting Ticker ${index} - ${stock_symbol}, device_mac_address: ${device_mac_address} to expire in ${expireTTL}`, type: BUSINESS_LOG_TYPE, transactional: false, stock_symbol, device_mac_address
-  });
   redisClient.expire(index, expireTTL)
-  log({
-    message: `sent result: ${result} from api`, type: BUSINESS_LOG_TYPE, transactional: false, stock_symbol, device_mac_address
-  });
   return result
 
 }
+
+const update = async (req, res, next) => {
+  for (const supportedIndex of Object.keys(supportedIndexes)) {
+    getIndex(supportedIndex)
+  }
+  res.json({})
+  return
+}
+
+
+
 
 const getStock = async (req, res, next) => {
   try {
@@ -166,4 +165,4 @@ function relDiff(a, b) {
   return 100 * (a - b) / ((a + b) / 2);
 }
 
-module.exports = { get, getStock };
+module.exports = { get, getStock, update };

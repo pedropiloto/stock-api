@@ -52,6 +52,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get("/stock/quote", authMiddleware, stockController.get);
 app.get("/stock", authMiddleware, stockController.getStock);
+app.post("/stock/actions/update", authMiddleware, stockController.update);
 
 app.get("/ape", authMiddleware, apeController.get);
 app.post("/ape", authMiddleware, apeController.create);
