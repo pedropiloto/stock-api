@@ -134,7 +134,7 @@ const getIndex = async (index) => {
 
 const update = async (req, res, next) => {
   for (const supportedIndex of Object.keys(supportedIndexes)) {
-    getIndex(supportedIndex)
+    await getIndex(supportedIndex)
   }
   res.json({})
   return
