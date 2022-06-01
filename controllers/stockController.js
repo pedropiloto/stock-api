@@ -47,20 +47,25 @@ const get = async (req, res, next) => {
   newrelic.addCustomAttribute('cached', false)
 
   if (Object.keys(supportedIndexes).includes(stock_symbol)) {
-    try {
-      newrelic.addCustomAttribute('isIndex', true)
-      result = await getIndex(stock_symbol, device_mac_address)
-      res.send(result)
-      return
-    } catch (error) {
-      log({
-        message: `UNKNOWN ERROR: ${error.stack}, dtock: ${stock_symbol} device_mac_address: ${device_mac_address}`, type: OPERATIONAL_LOG_TYPE, transactional: false, stock_symbol, device_mac_address, severity: ERROR_SEVERITY, error
-      });
-      Bugsnag.notify(error);
-      newrelic.noticeError(error)
-      res.status(500).send("Upstream Error")
-      return
-    }
+    res.status(500).send("Upstream Error")
+    log({
+      message: `No index value in cache`, type: OPERATIONAL_LOG_TYPE, transactional: false, stock_symbol, device_mac_address, severity: ERROR_SEVERITY, error
+    });
+    return
+    // try {
+    //   newrelic.addCustomAttribute('isIndex', true)
+    //   result = await getIndex(stock_symbol, true)
+    //   res.send(result)
+    //   return
+    // } catch (error) {
+    //   log({
+    //     message: `UNKNOWN ERROR: ${error.stack}, dtock: ${stock_symbol} device_mac_address: ${device_mac_address}`, type: OPERATIONAL_LOG_TYPE, transactional: false, stock_symbol, device_mac_address, severity: ERROR_SEVERITY, error
+    //   });
+    //   Bugsnag.notify(error);
+    //   newrelic.noticeError(error)
+    //   res.status(500).send("Upstream Error")
+    //   return
+    // }
   }
 
   let stock_requested = await Stock.findOne({ symbol: stock_symbol })
@@ -114,7 +119,7 @@ const getIndex = async (index) => {
   const stock_symbol = supportedIndexes[index]
   const provider_result = await investingGateway.getIndexQuote(stock_symbol)
 
-  const quote = Number(provider_result['quote'].replace(",",""))
+  const quote = Number(provider_result['quote'].replace(",", ""))
   const change = Number(provider_result['change'])
 
   const result = `${quote};${change}`
