@@ -49,7 +49,7 @@ const get = async (req, res, next) => {
   if (Object.keys(supportedIndexes).includes(stock_symbol)) {
     res.status(500).send("Upstream Error")
     log({
-      message: `No index value in cache`, type: OPERATIONAL_LOG_TYPE, transactional: false, stock_symbol, device_mac_address, severity: ERROR_SEVERITY, error
+      message: `No index value in cache`, type: OPERATIONAL_LOG_TYPE, transactional: false, stock_symbol, device_mac_address, severity: ERROR_SEVERITY
     });
     return
     // try {
