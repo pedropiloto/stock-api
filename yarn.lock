@@ -1022,10 +1022,10 @@ inherits@2.0.3, inherits@~2.0.1:
   resolved "https://registry.npmjs.org/inherits/-/inherits-2.0.3.tgz"
   integrity sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=
 
-investing.com-scraper@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/investing.com-scraper/-/investing.com-scraper-1.0.2.tgz#ba1e720d2a47d7217d243e642da2c8aab002932c"
-  integrity sha512-UCsDUXvEXd/JJXwohKIGIGvn5r5vuoOddmNPA17OsDwZZmOnr0qQvbGM/bRsIYN65NeHRG0RrqySwO4dgYawfg==
+investing.com-scraper@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/investing.com-scraper/-/investing.com-scraper-1.0.5.tgz#99388722d49c7aeebce0fb62e33566a81b5fedec"
+  integrity sha512-Uerm+3Zo04eVVfBfQSUvakhqktx525u7YgmQy1U54VHAQsO2Hwn8Gr86/OS8Cwhvw7fpccrDUeNdgRMrS/i8vA==
   dependencies:
     axios "^0.21.1"
     puppeteer "^13.5.1"
