@@ -126,8 +126,6 @@ const getIndex = async (index) => {
   redisClient.set(index, result).catch((error) => {
     Bugsnag.notify(error);
   })
-  let expireTTL = process.env.REDIS_INDEX_TICKER_MARKET_TTL || 3600
-  redisClient.expire(index, expireTTL)
   return result
 
 }
