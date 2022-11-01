@@ -143,15 +143,15 @@ const update = async (req, res, next) => {
 
 const getStock = async (req, res, next) => {
   try {
-    let stock_requested = req.query.name && req.query.name.toUpperCase()
+    let stockRequested = req.query.name && req.query.name.toUpperCase()
     newrelic.addCustomAttribute('device_mac_address', req.headers['device-mac-address'])
     newrelic.addCustomAttribute('device_model', req.headers['device-model'] || "MULTI_STOCK")
     newrelic.addCustomAttribute('device_version', req.headers['device-version'] || "1.0.0")
-    newrelic.addCustomAttribute('stock', stock_requested)
+    newrelic.addCustomAttribute('stock', stockRequested)
 
-    let stock = await Stock.findOne({ symbol: stock_requested, active: true })
+    let stock = await Stock.findOne({ symbol: stockRequested, active: true })    
 
-    if (!!stock) {
+    if (!!stock || Object.keys(supportedIndexes).includes(stockRequested)) {
       res.json(stock)
     } else {
       res.status(404).send("Stock does not exist")
@@ -159,7 +159,7 @@ const getStock = async (req, res, next) => {
 
   } catch (error) {
     log({
-      message: `UNKNOWN ERROR: ${error.stack}, stock: ${stock_requested} device_mac_address: ${device_mac_address}`, type: OPERATIONAL_LOG_TYPE, transactional: false, stock_symbol: stock_requested, device_mac_address, severity: ERROR_SEVERITY, error
+      message: `UNKNOWN ERROR: ${error.stack}, stock: ${stockRequested} device_mac_address: ${device_mac_address}`, type: OPERATIONAL_LOG_TYPE, transactional: false, stock_symbol: stockRequested, device_mac_address, severity: ERROR_SEVERITY, error
     });
     Bugsnag.notify(error);
     newrelic.noticeError(error)
