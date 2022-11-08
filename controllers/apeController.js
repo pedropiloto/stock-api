@@ -49,11 +49,8 @@ const create = async (req, res, next) => {
   });
 }
 
-
 const cenas = async (req, res, next) => {
-  return res.json(
-    {}
-  );
+  return res.json({})
 }
 
 const isValidIP = (str) => {

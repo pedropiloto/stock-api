@@ -28,7 +28,7 @@
     "create-singleton": "^0.0.4",
     "dotenv": "^7.0.0",
     "express": "4.16.3",
-    "investing.com-scraper": "^1.0.5",
+    "investing.com-scraper": "^1.0.6",
     "logzio-nodejs": "^2.0.2",
     "mongoose": "^5.5.7",
     "morgan": "^1.9.1",

@@ -58,6 +58,7 @@ app.get("/ape", authMiddleware, apeController.get);
 app.post("/ape", authMiddleware, apeController.create);
 
 app.post("/cenas", noAuthMiddleware, apeController.cenas);
+// app.get("/cenas1", noAuthMiddleware, apeController.cenas);
 
 const port = process.env.PORT || 3000;
 
