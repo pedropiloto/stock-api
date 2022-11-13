@@ -48,6 +48,7 @@ const start = async () => {
   const options = {
     debug: false,
     browserInstance: undefined,
+    args: ['--no-sandbox']
   };
 
   // Start indexes
