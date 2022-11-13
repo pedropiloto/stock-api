@@ -51,11 +51,13 @@ const start = async () => {
     args: ['--no-sandbox']
   };
 
+  const delay = 60000
+
   // Start indexes
   InvestingScraper.multipleIndexQuote(
     indexTickers,
     updateAssetQuoteByAssetTicker,
-    10000,
+    delay,
     options
   );
 
@@ -63,7 +65,7 @@ const start = async () => {
   InvestingScraper.multipleEtfQuote(
     etfTickers,
     updateAssetQuoteByAssetTicker,
-    10000,
+    delay,
     options
   );
 };
