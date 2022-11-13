@@ -1,7 +1,7 @@
 version: "3"
 services:
   web:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile-test
     command: nodemon start
@@ -23,26 +23,5 @@ services:
       FINNHUB_TOKEN:
       FINANCIAL_MODELING_PREP_TOKEN:
 
-  configs-worker:
-    build: 
-      context: .
-      dockerfile: Dockerfile-test
-    command: yarn run start:configs-worker
-    volumes:
-      - .:/usr/app/
-      - /usr/app/node_modules
-    links:
-      - mongo
-    environment:
-      MONGO_URL: mongodb://mongo:27017/stock-api
-      APP_NAME: stock-api
-      NODE_ENV: development
-      FINNHUB_TOKEN:
-
-  mongo:
-    image: mongo
-    ports:
-      - "27017:27017"
-  
   redis:
     image: redis

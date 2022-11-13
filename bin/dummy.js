@@ -1,8 +1,16 @@
+const pino = require("pino");
+
 const investingGateway = require("../gateways/investing");
 
-const start = async () => {
- const response = await investingGateway.getIndexQuote('us-spx-500')
- console.log(response)
-}
+const logger = pino({
+  level: process.env.LOG_LEVEL || "info",
+  prettyPrint: { colorize: true },
+});
 
-start()
+
+const start = async () => {
+  const response = await investingGateway.getIndexQuote("us-spx-500");
+  logger.info(response);
+};
+
+start();
