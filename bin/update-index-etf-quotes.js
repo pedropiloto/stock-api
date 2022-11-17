@@ -11,32 +11,35 @@ const logger = pino({
   prettyPrint: { colorize: true },
 });
 
-const getAssetKeyByTicker = (assetTicker) => {
-  for (const key of Object.keys(supportedIndexes)) {
-    const asset = supportedIndexes[key];
+const getAssetKeysByTicker = (assetTicker) => {
+  const assetKeys = []
+  for (const assetKey of Object.keys(supportedIndexes)) {
+    const asset = supportedIndexes[assetKey];
     if (asset["ticker"] === assetTicker) {
-      return key;
+      assetKeys.push(assetKey);
     }
   }
-  return undefined;
+  return assetKeys;
 };
 
 const updateAssetQuoteByAssetTicker = (assetTicker, quote) => {
   const result = `${quote["quote"]};${quote["change"]}`;
-  const assetKey = getAssetKeyByTicker(assetTicker);
-  logger.info(`Persisting ${assetKey} with ${result}`);
-  try {
-    AssetQuotesInteractor.updateAssetQuote(assetKey, result);
-  } catch (e) {
-    logger.errror(
-      `Something went wrong while updating ${assetTicker} with ${quote}. Error: ${e}`
-    );
+  const assetKeys = getAssetKeysByTicker(assetTicker);
+  for (const assetKey of assetKeys) {
+    logger.info(`Persisting ${assetKey} with ${result}`);
+    try {
+      AssetQuotesInteractor.updateAssetQuote(assetKey, result);
+    } catch (e) {
+      logger.errror(
+        `Something went wrong while updating ${assetTicker} with ${quote}. Error: ${e}`
+      );
+    }
   }
 };
 
 const start = async () => {
-  const indexTickers = [];
-  const etfTickers = [];
+  let indexTickers = [];
+  let etfTickers = [];
   for (const key of Object.keys(supportedIndexes)) {
     const asset = supportedIndexes[key];
     if (asset["type"] === "etf") {
@@ -52,6 +55,12 @@ const start = async () => {
   };
 
   const delay = 60000
+
+  indexTickers = [...new Set(indexTickers)];
+  etfTickers = [...new Set(etfTickers)];
+
+  console.log(indexTickers)
+  console.log(etfTickers)
 
   // Start indexes
   InvestingScraper.multipleIndexQuote(
