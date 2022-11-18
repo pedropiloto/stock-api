@@ -58,7 +58,6 @@ const start = async () => {
       '--disable-accelerated-2d-canvas',
       '--no-first-run',
       '--no-zygote',
-      '--single-process', // <- this one doesn't works in Windows
       '--disable-gpu'
     ],
     
