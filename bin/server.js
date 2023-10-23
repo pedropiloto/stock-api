@@ -10,6 +10,7 @@ require("dotenv").config();
 
 const mongoose = require("../src/config/database"); //database configuration
 const stockController = require("../src/controllers/stockController");
+const healthController = require("../src/controllers/healthController");
 const apeController = require("../src/controllers/apeController");
 const authMiddleware = require("../src/auth-middleware");
 const noAuthMiddleware = require("../src/no-auth-middleware");
@@ -32,6 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 // routes
 app.get("/stock/quote", authMiddleware, stockController.getAssetQuote);
 app.get("/stock", authMiddleware, stockController.getAsset);
+app.get("/health", authMiddleware, healthController.health);
 app.get("/ape", authMiddleware, apeController.get);
 app.post("/ape", authMiddleware, apeController.create);
 app.post("/custom", noAuthMiddleware, apeController.custom);
