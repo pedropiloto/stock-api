@@ -22,7 +22,6 @@
   "dependencies": {
     "@bugsnag/js": "^7.9.2",
     "@bugsnag/plugin-express": "^7.9.2",
-    "@newrelic/native-metrics": "^6.0.0",
     "amqplib": "^0.5.3",
     "axios": "^0.21.1",
     "body-parser": "1.18.2",

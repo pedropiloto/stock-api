@@ -5,7 +5,6 @@ const cors = require("cors");
 const pino = require("pino");
 const Bugsnag = require("@bugsnag/js");
 var BugsnagPluginExpress = require("@bugsnag/plugin-express");
-const getMetricEmitter = require("@newrelic/native-metrics");
 require("dotenv").config();
 
 const mongoose = require("../src/config/database"); //database configuration
@@ -42,19 +41,6 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
   logger.info(`Node server listening on port ${port}`);
 });
-
-var emitter = getMetricEmitter();
-if (emitter.gcEnabled) {
-  setInterval(() => {
-    emitter.getGCMetrics();
-  }, 1000);
-}
-
-if (emitter.loopEnabled) {
-  setInterval(() => {
-    emitter.getLoopMetrics();
-  }, 1000);
-}
 
 mongoose.connection.on("error", () => {
   logger.error("MongoDB connection error");
