@@ -27,8 +27,8 @@ app.use(
 app.use(morganLogger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(responseTime(logResponseTime));
+
 // routes
 app.get("/stock/quote", authMiddleware, StockController.getAssetQuote);
 app.get("/stock", authMiddleware, StockController.getAsset);

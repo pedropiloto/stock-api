@@ -39,7 +39,6 @@ const call = async (assetSymbol) => {
       Bugsnag.notify(error);
     });
     let expireTTL = process.env.REDIS_TICKER_MARKET_TTL || 5;
-    logger.info(`Setting Ticker ${assetSymbol} to expire in ${expireTTL}`);
     redisClient.expire(assetSymbol, expireTTL);
     return { value: result, isCached: false };
   } catch (error) {

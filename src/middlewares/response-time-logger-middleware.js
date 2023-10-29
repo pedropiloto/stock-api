@@ -6,7 +6,7 @@ module.exports = (req, res, time) => {
     const url = req.url
     const status = res.statusCode
     const ticker = req.query.name && req.query.name.toUpperCase();
-    labels = {url}
+    const labels = {url}
     if(ticker){
       labels['ticker'] = ticker
     }
