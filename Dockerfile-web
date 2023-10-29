@@ -13,7 +13,7 @@ RUN yarn install --frozen-lockfile
 # Bundle app source
 COPY . .
 
-HEALTHCHECK --interval=10s --timeout=2s --start-period=15s \  
+HEALTHCHECK --interval=60s --timeout=2s --start-period=15s \  
     CMD node bin/healthcheck.js
 
 CMD [ "yarn", "start" ]

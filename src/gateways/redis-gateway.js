@@ -1,11 +1,8 @@
 const redis = require("redis");
 const Bugsnag = require("@bugsnag/js");
-const pino = require("pino");
+const { getLogger } = require("../utils/logger");
 
-const logger = pino({
-  level: process.env.LOG_LEVEL || "info",
-  prettyPrint: { colorize: true },
-});
+const logger = getLogger();
 
 const client = redis
   .createClient({ url: process.env.REDIS_CONNECTION_STRING_URL })

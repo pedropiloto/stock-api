@@ -1,7 +1,7 @@
 module.exports = (req, res, next) => {
   const api_key = req.headers["api-key"];
   if (
-    process.env.NODE_ENV !== "development" &&
+    process.env.NODE_ENV === "production" &&
     !!process.env.API_KEY &&
     api_key !== process.env.API_KEY
   ) {

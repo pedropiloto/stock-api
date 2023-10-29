@@ -3,8 +3,12 @@ const pino = require("pino");
 const investingGateway = require("../gateways/investing");
 
 const logger = pino({
-  level: process.env.LOG_LEVEL || "info",
-  prettyPrint: { colorize: true },
+  transport: {
+    target: "pino-pretty",
+    options: {
+      colorize: true,
+    },
+  },
 });
 
 const start = async () => {

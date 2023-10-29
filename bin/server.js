@@ -2,7 +2,6 @@ require("newrelic");
 const express = require("express");
 const morganLogger = require("morgan");
 const cors = require("cors");
-const pino = require("pino");
 const Bugsnag = require("@bugsnag/js");
 var BugsnagPluginExpress = require("@bugsnag/plugin-express");
 require("dotenv").config();
@@ -11,11 +10,13 @@ require("../src/gateways/redis-gateway");
 const StockController = require("../src/controllers/stock-controller");
 const HealthController = require("../src/controllers/health-controller");
 const authMiddleware = require("../src/middlewares/auth-middleware");
+const noAuthMiddleware = require("../src/middlewares/no-auth-middleware");
+const { getLogger } = require("../src/utils/logger");
+const logResponseTime = require("../src/middlewares/response-time-logger-middleware");
+const logError = require("../src/middlewares/error-logger-middleware");
+const responseTime = require("response-time");
 
-const logger = pino({
-  level: process.env.LOG_LEVEL || "info",
-  prettyPrint: { colorize: true },
-});
+const logger = getLogger();
 
 const app = express();
 app.use(
@@ -27,10 +28,13 @@ app.use(morganLogger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(responseTime(logResponseTime));
 // routes
 app.get("/stock/quote", authMiddleware, StockController.getAssetQuote);
 app.get("/stock", authMiddleware, StockController.getAsset);
-app.get("/health", authMiddleware, HealthController.health);
+app.get("/health", noAuthMiddleware, HealthController.health);
+
+app.use(logError);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
