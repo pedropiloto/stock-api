@@ -1,5 +1,4 @@
 const newrelic = require("newrelic");
-
 const supportedIndexes = require("../supported-indexes");
 const AssetQuotesInteractor = require("../interactors/asset-quotes");
 
@@ -7,6 +6,7 @@ const AssetQuotesInteractor = require("../interactors/asset-quotes");
 const getAssetQuote = async (req, res, next) => {
   setCustomNewRelicHeaders(req);
   const assetSymbol = req.query.name && req.query.name.toUpperCase();
+  console.log("cenas");
   const quote = await AssetQuotesInteractor.call(assetSymbol);
 
   if (!quote) {

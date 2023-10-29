@@ -11,12 +11,9 @@ services:
     ports:
       - "3000:3000"
     links:
-      - mongo
       - redis
     environment:
-      MONGO_URL: mongodb://mongo:27017/stock-api
-      REDIS_URL: redis
-      REDIS_PORT: 6379
+      REDIS_URL: redis://default@redis:6379
       APP_NAME: stock-api
       API_KEY: dummy
       NODE_ENV: development

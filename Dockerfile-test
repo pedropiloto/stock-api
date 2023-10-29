@@ -7,8 +7,9 @@ COPY package.json ./
 COPY yarn.lock ./
 
 RUN apt-get update
+RUN apt-get install -y chromium
 
 RUN yarn global add nodemon
-RUN yarn install
+RUN yarn install --frozen-lockfile
 
 COPY . .

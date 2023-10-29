@@ -12,10 +12,4 @@ const start = async () => {
   const response = await investingGateway.getIndexQuote("us-spx-500");
   logger.info(response);
 };
-
-const start2 = async () => {
-  const response = await investingGateway.getIndexQuote("us-spx-500");
-  logger.info(response);
-};
-
 start();

@@ -7,12 +7,10 @@ const Bugsnag = require("@bugsnag/js");
 var BugsnagPluginExpress = require("@bugsnag/plugin-express");
 require("dotenv").config();
 
-const mongoose = require("../src/config/database"); //database configuration
-const stockController = require("../src/controllers/stockController");
-const healthController = require("../src/controllers/healthController");
-const apeController = require("../src/controllers/apeController");
+require("../src/gateways/redis-gateway");
+const StockController = require("../src/controllers/stock-controller");
+const HealthController = require("../src/controllers/health-controller");
 const authMiddleware = require("../src/auth-middleware");
-const noAuthMiddleware = require("../src/no-auth-middleware");
 
 const logger = pino({
   level: process.env.LOG_LEVEL || "info",
@@ -30,21 +28,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // routes
-app.get("/stock/quote", authMiddleware, stockController.getAssetQuote);
-app.get("/stock", authMiddleware, stockController.getAsset);
-app.get("/health", authMiddleware, healthController.health);
-app.get("/ape", authMiddleware, apeController.get);
-app.post("/ape", authMiddleware, apeController.create);
-app.post("/custom", noAuthMiddleware, apeController.custom);
+app.get("/stock/quote", authMiddleware, StockController.getAssetQuote);
+app.get("/stock", authMiddleware, StockController.getAsset);
+app.get("/health", authMiddleware, HealthController.health);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   logger.info(`Node server listening on port ${port}`);
-});
-
-mongoose.connection.on("error", () => {
-  logger.error("MongoDB connection error");
-  Bugsnag.notify(new Error("MongoDB connection error"));
 });
 
 if (process.env.NODE_ENV === "production" && process.env.BUSGNAG_API_KEY) {
