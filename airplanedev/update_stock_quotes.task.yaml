@@ -1,5 +1,0 @@
-name: update stock quotes
-slug: update_stock_quotes
-shell:
-  entrypoint: update_stock_quotes.sh
-timeout: 7200

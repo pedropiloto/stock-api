@@ -7,14 +7,15 @@ const logger = pino({
   prettyPrint: { colorize: true },
 });
 
-const client = redis.createClient({ url: process.env.REDIS_CONNECTION_STRING_URL })
-  .on('error', error => {
+const client = redis
+  .createClient({ url: process.env.REDIS_CONNECTION_STRING_URL })
+  .on("error", (error) => {
     logger.error(`ERROR connecting to Redis: ${error}`);
     Bugsnag.notify(error);
   })
   .on("connect", () => {
     logger.info("Redis client connected");
-  })
+  });
 
 client.connect();
 

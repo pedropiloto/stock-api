@@ -8,9 +8,12 @@ COPY package.json ./
 COPY yarn.lock ./
 
 RUN apt-get update
-RUN apt-get install -y chromium
 RUN yarn install --frozen-lockfile
 
 # Bundle app source
 COPY . .
+
+HEALTHCHECK --interval=10s --timeout=2s --start-period=15s \  
+    CMD node bin/healthcheck.js
+
 CMD [ "yarn", "start" ]

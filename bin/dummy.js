@@ -7,7 +7,6 @@ const logger = pino({
   prettyPrint: { colorize: true },
 });
 
-
 const start = async () => {
   const response = await investingGateway.getIndexQuote("us-spx-500");
   logger.info(response);

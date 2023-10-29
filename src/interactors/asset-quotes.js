@@ -3,7 +3,7 @@ const Bugsnag = require("@bugsnag/js");
 const redisClient = require("../gateways/redis-gateway");
 const pino = require("pino");
 
-const supportedIndexes = require("../supported-indexes");
+const supportedIndexes = require("../config/supported-indexes");
 const FinnhubGateway = require("../gateways/finnhub-gateway");
 
 const logger = pino({

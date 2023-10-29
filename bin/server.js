@@ -10,7 +10,7 @@ require("dotenv").config();
 require("../src/gateways/redis-gateway");
 const StockController = require("../src/controllers/stock-controller");
 const HealthController = require("../src/controllers/health-controller");
-const authMiddleware = require("../src/auth-middleware");
+const authMiddleware = require("../src/middlewares/auth-middleware");
 
 const logger = pino({
   level: process.env.LOG_LEVEL || "info",
