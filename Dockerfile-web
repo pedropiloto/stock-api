@@ -4,16 +4,22 @@ FROM node:16
 WORKDIR /usr/src/app
 
 # Install app dependencies
-COPY package.json ./
+COPY package.json ./ 
 COPY yarn.lock ./
 
-RUN apt-get update
+# Update apt and install any tools needed (example: git, curl)
+RUN apt-get update && \
+    apt-get install -y git curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install node dependencies
 RUN yarn install --frozen-lockfile
 
 # Bundle app source
 COPY . .
 
-HEALTHCHECK --interval=60s --timeout=2s --start-period=15s \  
+# Healthcheck
+HEALTHCHECK --interval=60s --timeout=2s --start-period=15s \
     CMD node bin/healthcheck.js
 
-CMD [ "yarn", "start" ]
+CMD ["yarn", "start"]
