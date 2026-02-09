@@ -10,25 +10,21 @@ const limiter = new Bottleneck({
   minTime: 5000, // pick a value that makes sense for your use case
 });
 
-const getStocks = async () => {
-  return limiter.wrap(() =>
-    axios({
-      method: "get",
-      url: "https://finnhub.io/api/v1/stock/symbol?exchange=US",
-      headers,
-    })
-  )();
-};
+const getStocks = limiter.wrap(async () => {
+  return axios({
+    method: "get",
+    url: "https://finnhub.io/api/v1/stock/symbol?exchange=US",
+    headers,
+  });
+});
 
-const getQuote = async (symbol) => {
-  return limiter.wrap(() =>
-    axios({
-      method: "get",
-      url: `https://finnhub.io/api/v1/quote?symbol=${symbol}`,
-      headers,
-    })
-  )();
-};
+const getQuote = limiter.wrap(async (symbol) => {
+  return axios({
+    method: "get",
+    url: `https://finnhub.io/api/v1/quote?symbol=${symbol}`,
+    headers,
+  });
+});
 
 module.exports = {
   getStocks,
