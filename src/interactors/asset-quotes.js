@@ -39,7 +39,10 @@ const call = async (assetSymbol) => {
       Bugsnag.notify(error);
     });
     let expireTTL = process.env.REDIS_TICKER_MARKET_TTL || 5;
-    redisClient.expire(assetSymbol, expireTTL);
+    redisClient.expire(assetSymbol, expireTTL).catch((error) => {
+      logger.error(`ERROR setting cache expiry: ${error.stack}, stock: ${assetSymbol}`);
+      Bugsnag.notify(error);
+    });
     return { value: result, isCached: false };
   } catch (error) {
     logger.error(`UNKNOWN ERROR: ${error.stack}, stock: ${assetSymbol}`);

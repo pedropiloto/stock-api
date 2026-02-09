@@ -14,6 +14,9 @@ const client = redis
     logger.info("Redis client connected");
   });
 
-client.connect();
+client.connect().catch((error) => {
+  logger.error(`Failed to connect to Redis on startup: ${error}`);
+  Bugsnag.notify(error);
+});
 
 module.exports = client;
